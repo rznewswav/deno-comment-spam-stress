@@ -13,7 +13,7 @@ user: 1
 host: {{host}}
 Content-Type: application/json
 
-{"comment": "different same message"}
+{"comment": "no same message"}
 
 ###
 

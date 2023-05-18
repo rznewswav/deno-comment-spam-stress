@@ -2,6 +2,7 @@ import { Controller } from "./utils/controller.ts";
 import { F } from "./utils/response.util.ts";
 import { posix } from "https://deno.land/std@0.187.0/path/mod.ts";
 import { Context } from "./utils/context.util.ts";
+import { bench } from "./utils/benchmark.util.ts";
 
 // Start listening on port 8080 of localhost.
 export class Server {
@@ -54,7 +55,6 @@ export class Server {
     // Each request sent over the HTTP connection will be yielded as an async
     // iterator from the HTTP connection.
     for await (const requestEvent of httpConn) {
-      const now = performance.now();
       const request = requestEvent.request;
       const { method, url } = request;
       const parsedUrl = new URL(url);
@@ -68,15 +68,16 @@ export class Server {
       }
 
       try {
-        await this.handle(context, controller);
+        await bench(
+          async () => {
+            await this.handle(context, controller);
+          },
+          "server",
+          `${context.status} ${method} ${path}`,
+        );
       } catch (error) {
         console.error(`Error at handling ${method} ${path}`);
         console.trace(error);
-      } finally {
-        const end = performance.now();
-        const timeTakenMs = end - now;
-        const timeTakenS = (timeTakenMs / 1000).toFixed(2).padStart(6, " ");
-        console.log(`[${method}] ${path} - ${timeTakenS}s`);
       }
     }
   }

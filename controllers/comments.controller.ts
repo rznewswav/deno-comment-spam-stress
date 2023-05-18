@@ -3,6 +3,7 @@ import { F, Reply, S } from "../utils/response.util.ts";
 import { DB } from "https://deno.land/x/sqlite@v3.7.2/mod.ts";
 import { RedisService } from "../redis/redis.service.ts";
 import { v5 } from "https://deno.land/std@0.109.0/uuid/mod.ts";
+import { bench } from "../utils/benchmark.util.ts";
 
 const redis = new RedisService();
 redis
@@ -27,17 +28,17 @@ export class GetCommentController implements Controller {
   path = "/api/v1/comments";
   middlewares = void 0;
   handle(request: Request): Promise<Reply> {
-    const url = new URL(request.url)
-    const showHidden = url.searchParams.has('showHidden')
-    let result = new Array<[number, string, string, number, string]>()
+    const url = new URL(request.url);
+    const showHidden = url.searchParams.has("showHidden");
+    let result = new Array<[number, string, string, number, string]>();
     if (showHidden) {
       result = database.query<typeof result[0]>(
         `SELECT * FROM comments ORDER BY createdAt DESC`,
-      );  
+      );
     } else {
       result = database.query<typeof result[0]>(
         `SELECT * FROM comments WHERE isHidden = 0 ORDER BY createdAt DESC`,
-      );  
+      );
     }
 
     return Promise.resolve(S({
@@ -70,12 +71,20 @@ export class CreateCommentController implements Controller {
   spamCountThreshold = 3;
 
   async getUserSpamRedisKey(user: string, message: string) {
-    const hashedMessage = await createV5HashFromMessage(message);
+    const hashedMessage = await bench(
+      async () => await createV5HashFromMessage(message),
+      "v5",
+      `${user} ${message}`,
+    );
     return `user_spam:${user}:${hashedMessage}`;
   }
 
   async getSpamCount(user: string, comment: string) {
-    const key = await this.getUserSpamRedisKey(user, comment);
+    const key = await bench(
+      async () => await this.getUserSpamRedisKey(user, comment),
+      "redis",
+      `${user} ${comment}`,
+    );
     const jsonOrNull = await redis.get(key);
     const spamStats = {
       key,
@@ -101,14 +110,19 @@ export class CreateCommentController implements Controller {
     comment: string,
     messageIds: number[],
   ) {
-    await redis.setex(
-      key,
-      this.detectSpamWithinS,
-      JSON.stringify({
-        count,
-        comment,
-        messageIds,
-      }),
+    await bench(
+      async () =>
+        await redis.setex(
+          key,
+          this.detectSpamWithinS,
+          JSON.stringify({
+            count,
+            comment,
+            messageIds,
+          }),
+        ),
+      "redis",
+      `setex ${key}`,
     );
   }
 
@@ -141,11 +155,12 @@ export class CreateCommentController implements Controller {
     const isSpam = spamCount >= this.spamCountThreshold;
 
     if (isSpam) {
-      const questionMarks = Array.from({length: spamStats.messageIds.length}).map(() => "?").join(",")
+      const questionMarks = Array.from({ length: spamStats.messageIds.length })
+        .map(() => "?").join(",");
       database.query(
         `UPDATE comments SET isHidden = 1 WHERE id in (${questionMarks})`,
         spamStats.messageIds,
-      )
+      );
       return F({
         message: "spam detected",
       }).Status(403);
@@ -156,7 +171,7 @@ export class CreateCommentController implements Controller {
       [user, json.comment, new Date()],
     );
 
-    const id = rows.find(e => e) as number
+    const id = rows.find((e) => e) as number;
 
     await this.saveSpamTracking(
       key,
