@@ -1,0 +1,15 @@
+GET / HTTP/1.1
+host: {{host}}
+
+###
+
+GET /api/v1/health HTTP/1.1
+host: {{host}}
+
+###
+
+POST / HTTP/1.1
+host: {{host}}
+Content-Type: application/json
+
+{"hello": "world"}

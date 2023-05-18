@@ -1,0 +1,9 @@
+{
+    "deno.enable": true,
+    "rest-client.environmentVariables": {
+        "$shared": {},
+        "dev": {
+            "host": "localhost:3000"
+        }
+    }
+}
