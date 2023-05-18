@@ -9,10 +9,11 @@ host: {{host}}
 ###
 
 POST /api/v1/comments HTTP/1.1
+user: 1
 host: {{host}}
 Content-Type: application/json
 
-{"comment": "world"}
+{"comment": "different same message"}
 
 ###
 
