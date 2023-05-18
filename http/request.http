@@ -8,8 +8,13 @@ host: {{host}}
 
 ###
 
-POST / HTTP/1.1
+POST /api/v1/comments HTTP/1.1
 host: {{host}}
 Content-Type: application/json
 
-{"hello": "world"}
+{"comment": "world"}
+
+###
+
+GET /api/v1/comments HTTP/1.1
+host: {{host}}

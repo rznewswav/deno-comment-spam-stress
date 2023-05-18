@@ -12,7 +12,8 @@ export class Server {
   })
     .Status(404);
 
-  addController(controller: Controller) {
+  addController(controllerCls: { new (): Controller }) {
+    const controller = new controllerCls();
     const normalizedPath = posix.join("/", controller.path);
     const normalizedMethod = controller.method.toLocaleUpperCase("en-us");
     this.methodPathControllers[normalizedMethod] ??= {};
@@ -53,7 +54,7 @@ export class Server {
     // Each request sent over the HTTP connection will be yielded as an async
     // iterator from the HTTP connection.
     for await (const requestEvent of httpConn) {
-      const now = performance.now()
+      const now = performance.now();
       const request = requestEvent.request;
       const { method, url } = request;
       const parsedUrl = new URL(url);
@@ -72,11 +73,10 @@ export class Server {
         console.error(`Error at handling ${method} ${path}`);
         console.trace(error);
       } finally {
-        const end = performance.now()
-        const timeTakenMs = end - now
-        const timeTakenS = (timeTakenMs / 1000).toFixed(2).padStart(6, ' ')
-        console.log(`[${method}] ${path} - ${timeTakenS}s`)
-
+        const end = performance.now();
+        const timeTakenMs = end - now;
+        const timeTakenS = (timeTakenMs / 1000).toFixed(2).padStart(6, " ");
+        console.log(`[${method}] ${path} - ${timeTakenS}s`);
       }
     }
   }
