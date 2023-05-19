@@ -34,7 +34,7 @@ export class Context {
         ...this.headers,
       },
     })).catch((error: Error) => {
-      console.error(error)
+      console.error(error);
     });
   }
 
@@ -55,7 +55,7 @@ export class Context {
         ...this.headers,
       },
     })).catch((error: Error) => {
-      console.error(error)
+      console.error(error);
     });
   }
 

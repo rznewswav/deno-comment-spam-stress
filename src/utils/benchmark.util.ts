@@ -17,8 +17,13 @@ export async function benchRequest(
   } finally {
     const end = performance.now();
     const timeTakenMs = end - now;
-    const url = new URL(context.request.request.url)
-    serverLog(context.request.request.method, timeTakenMs, url.pathname, context.status)
+    const url = new URL(context.request.request.url);
+    serverLog(
+      context.request.request.method,
+      timeTakenMs,
+      url.pathname,
+      context.status,
+    );
   }
   if (throwError) {
     throw error;
@@ -42,7 +47,7 @@ export async function bench<T>(
   } finally {
     const end = performance.now();
     const timeTakenMs = end - now;
-    benchLog(name, timeTakenMs, typeof info === "string" ? info : info(out!))
+    benchLog(name, timeTakenMs, typeof info === "string" ? info : info(out!));
   }
   if (throwError) {
     throw error;
@@ -64,7 +69,7 @@ export function benchSync<T>(fn: () => T, name: string, info: string): T {
   } finally {
     const end = performance.now();
     const timeTakenMs = end - now;
-    benchLog(name, timeTakenMs, info)
+    benchLog(name, timeTakenMs, info);
   }
   if (throwError) {
     throw error;

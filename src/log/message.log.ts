@@ -1,3 +1,3 @@
 export function msgLog(message: string) {
-    console.info(`{"message":"${message}"}`)
+  console.info(`{"message":"${message}"}`);
 }

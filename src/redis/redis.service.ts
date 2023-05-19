@@ -7,7 +7,7 @@ import {
   RedisCommands,
 } from "../../deno_modules/deps.ts";
 const env = config();
-Object.assign(env, Deno.env.toObject())
+Object.assign(env, Deno.env.toObject());
 
 class RedisServiceProxy {
   redis: Redis | null = null;
@@ -53,10 +53,12 @@ class RedisServiceProxy {
     HealthController.registerPatient("cache", this.isHealthy.bind(this));
     const hostNamePort = {
       hostname: env.REDIS_HOST,
-      port: env.REDIS_PORT ?? '6379'
+      port: env.REDIS_PORT ?? "6379",
     };
-    console.log(`{"message":"redis config","config":{"hostname":"${hostNamePort.hostname}","port":"${hostNamePort.port}"}}`)
-    this.redis = await ConnectRedis({...hostNamePort});
+    console.log(
+      `{"message":"redis config","config":{"hostname":"${hostNamePort.hostname}","port":"${hostNamePort.port}"}}`,
+    );
+    this.redis = await ConnectRedis({ ...hostNamePort });
     this.proxy();
 
     globalThis.addEventListener("unload", () => {

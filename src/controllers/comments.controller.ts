@@ -32,11 +32,11 @@ export class GetCommentController implements Controller {
     let result = new Array<[number, string, string, number, string]>();
     if (showHidden) {
       result = database.query<typeof result[0]>(
-        `SELECT * FROM comments ORDER BY createdAt DESC`,
+        `SELECT * FROM comments ORDER BY createdAt DESC LIMIT 10`,
       );
     } else {
       result = database.query<typeof result[0]>(
-        `SELECT * FROM comments WHERE isHidden = 0 ORDER BY createdAt DESC`,
+        `SELECT * FROM comments WHERE isHidden = 0 ORDER BY createdAt DESC LIMIT 10`,
       );
     }
 

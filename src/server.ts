@@ -72,7 +72,7 @@ export class Server {
           async () => {
             await this.handle(context, controller);
           },
-          context
+          context,
         );
       } catch (error) {
         console.error(`Error at handling ${method} ${path}`);
