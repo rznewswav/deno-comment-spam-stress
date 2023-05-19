@@ -7,7 +7,7 @@ import { Server } from "./server.ts";
 import { msgLog } from "./log/message.log.ts";
 import { config } from "../deno_modules/deps.ts";
 const env = config();
-
+Object.assign(env, Deno.env.toObject())
 
 const tryPort = Number(env.PORT);
 const port = tryPort || 3000;
