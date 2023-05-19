@@ -1,7 +1,6 @@
-import { connect as ConnectRedis, Redis, RedisCommands } from "https://deno.land/x/redis@v0.29.4/mod.ts";
-import { config } from "https://deno.land/x/dotenv@v3.2.2/mod.ts";
 import { HealthController } from "../controllers/health.controller.ts";
 import { msgLog } from "../log/message.log.ts";
+import { ConnectRedis, Redis, RedisCommands, config } from "../../deno_modules/deps.ts";
 const env = config()
 
 class RedisServiceProxy {

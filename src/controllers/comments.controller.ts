@@ -1,8 +1,7 @@
+import { sqlite, v5 } from "../../deno_modules/deps.ts";
 import { Controller } from "../utils/controller.ts";
 import { F, Reply, S } from "../utils/response.util.ts";
-import { DB } from "https://deno.land/x/sqlite@v3.7.2/mod.ts";
 import { RedisService } from "../redis/redis.service.ts";
-import { v5 } from "https://deno.land/std@0.109.0/uuid/mod.ts";
 import { bench } from "../utils/benchmark.util.ts";
 
 const redis = new RedisService();
@@ -12,7 +11,7 @@ redis
     console.error("redis: cannot start redis");
   });
 
-const database = new DB("./data/database.db");
+const database = new sqlite("./data/database.db");
 database.execute(`
 CREATE TABLE IF NOT EXISTS comments (
   id INTEGER PRIMARY KEY AUTOINCREMENT,

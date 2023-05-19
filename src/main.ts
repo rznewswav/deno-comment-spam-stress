@@ -1,12 +1,12 @@
-import { config } from "https://deno.land/x/dotenv@v3.2.2/mod.ts";
 import {
   CreateCommentController,
   GetCommentController,
 } from "./controllers/comments.controller.ts";
-const env = config();
 import { HealthController } from "./controllers/health.controller.ts";
 import { Server } from "./server.ts";
 import { msgLog } from "./log/message.log.ts";
+import { config } from "../deno_modules/deps.ts";
+const env = config();
 
 
 const tryPort = Number(env.PORT);

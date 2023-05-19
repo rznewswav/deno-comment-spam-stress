@@ -1,8 +1,8 @@
 import { Controller } from "./utils/controller.ts";
 import { F } from "./utils/response.util.ts";
-import { posix } from "https://deno.land/std@0.187.0/path/mod.ts";
 import { Context } from "./utils/context.util.ts";
 import { bench } from "./utils/benchmark.util.ts";
+import { path } from "../deno_modules/deps.ts";
 
 // Start listening on port 8080 of localhost.
 export class Server {
@@ -15,7 +15,7 @@ export class Server {
 
   addController(controllerCls: { new (): Controller }) {
     const controller = new controllerCls();
-    const normalizedPath = posix.join("/", controller.path);
+    const normalizedPath = path.join("/", controller.path);
     const normalizedMethod = controller.method.toLocaleUpperCase("en-us");
     this.methodPathControllers[normalizedMethod] ??= {};
     this.methodPathControllers[normalizedMethod][normalizedPath] ??= controller;
