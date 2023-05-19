@@ -1,3 +1,5 @@
+import { benchLog } from "../log/bench.log.ts";
+
 export async function bench<T>(
   fn: () => Promise<T>,
   name: string,
@@ -16,7 +18,7 @@ export async function bench<T>(
     const end = performance.now();
     const timeTakenMs = end - now;
     const timeTakenS = (timeTakenMs / 1000).toFixed(2);
-    console.log(`${name} ${timeTakenS}s - ${info}`);
+    benchLog(name, timeTakenS, info)
   }
   if (throwError) {
     throw error;
@@ -39,7 +41,7 @@ export function benchSync<T>(fn: () => T, name: string, info: string): T {
     const end = performance.now();
     const timeTakenMs = end - now;
     const timeTakenS = (timeTakenMs / 1000).toFixed(2).padStart(6, " ");
-    console.log(`${name} ${timeTakenS}s - ${info}`);
+    benchLog(name, timeTakenS, info)
   }
   if (throwError) {
     throw error;

@@ -22,7 +22,7 @@ export class Server {
   }
 
   onConnectionError(error: Error) {
-    console.log(error);
+    console.error(error);
   }
 
   async start(port = 3000) {

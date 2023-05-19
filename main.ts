@@ -6,6 +6,7 @@ import {
 const env = config();
 import { HealthController } from "./controllers/health.controller.ts";
 import { Server } from "./server.ts";
+import { msgLog } from "./log/message.log.ts";
 
 
 const tryPort = Number(env.PORT);
@@ -15,4 +16,4 @@ server.addController(HealthController);
 server.addController(CreateCommentController);
 server.addController(GetCommentController);
 server.start(port);
-console.log(`Server started at port ${port}`);
+msgLog(`Server started at port ${port}`);

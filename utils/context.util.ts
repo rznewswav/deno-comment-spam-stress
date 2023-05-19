@@ -33,7 +33,9 @@ export class Context {
       headers: {
         ...this.headers,
       },
-    }));
+    })).catch((error: Error) => {
+      console.error(error)
+    });
   }
 
   fail(data: Record<string, unknown>) {
@@ -52,7 +54,9 @@ export class Context {
       headers: {
         ...this.headers,
       },
-    }));
+    })).catch((error: Error) => {
+      console.error(error)
+    });
   }
 
   setStatus(status: number) {

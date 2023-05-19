@@ -1,6 +1,7 @@
 import { connect as ConnectRedis, Redis, RedisCommands } from "https://deno.land/x/redis@v0.29.4/mod.ts";
 import { config } from "https://deno.land/x/dotenv@v3.2.2/mod.ts";
 import { HealthController } from "../controllers/health.controller.ts";
+import { msgLog } from "../log/message.log.ts";
 const env = config()
 
 class RedisServiceProxy {
@@ -75,5 +76,5 @@ if (import.meta.main) {
     const redisService = new RedisService()
     await redisService.start()
     const pong = await redisService.ping()
-    console.log({ ping: pong })
+    msgLog(`server is alive: ${pong}`)
 }
