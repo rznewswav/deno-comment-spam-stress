@@ -1,7 +1,7 @@
 import { Controller } from "./utils/controller.ts";
 import { F } from "./utils/response.util.ts";
 import { Context } from "./utils/context.util.ts";
-import { bench } from "./utils/benchmark.util.ts";
+import { benchRequest } from "./utils/benchmark.util.ts";
 import { path } from "../deno_modules/deps.ts";
 
 // Start listening on port 8080 of localhost.
@@ -68,12 +68,11 @@ export class Server {
       }
 
       try {
-        await bench(
+        await benchRequest(
           async () => {
             await this.handle(context, controller);
           },
-          "server",
-          `${context.status} ${method} ${path}`,
+          context
         );
       } catch (error) {
         console.error(`Error at handling ${method} ${path}`);

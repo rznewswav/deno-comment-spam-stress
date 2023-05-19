@@ -1,9 +1,34 @@
 import { benchLog } from "../log/bench.log.ts";
+import { serverLog } from "../log/server.log.ts";
+import { Context } from "./context.util.ts";
+
+export async function benchRequest(
+  fn: () => Promise<void>,
+  context: Context,
+): Promise<void> {
+  const now = performance.now();
+  let throwError = false;
+  let error: unknown = null;
+  try {
+    await fn();
+  } catch (e) {
+    throwError = true;
+    error = e;
+  } finally {
+    const end = performance.now();
+    const timeTakenMs = end - now;
+    const url = new URL(context.request.request.url)
+    serverLog(context.request.request.method, timeTakenMs, url.pathname, context.status)
+  }
+  if (throwError) {
+    throw error;
+  }
+}
 
 export async function bench<T>(
   fn: () => Promise<T>,
   name: string,
-  info: string,
+  info: string | ((out?: T) => string),
 ): Promise<T> {
   const now = performance.now();
   let throwError = false;
@@ -17,8 +42,7 @@ export async function bench<T>(
   } finally {
     const end = performance.now();
     const timeTakenMs = end - now;
-    const timeTakenS = (timeTakenMs / 1000).toFixed(2);
-    benchLog(name, timeTakenS, info)
+    benchLog(name, timeTakenMs, typeof info === "string" ? info : info(out!))
   }
   if (throwError) {
     throw error;
@@ -40,8 +64,7 @@ export function benchSync<T>(fn: () => T, name: string, info: string): T {
   } finally {
     const end = performance.now();
     const timeTakenMs = end - now;
-    const timeTakenS = (timeTakenMs / 1000).toFixed(2).padStart(6, " ");
-    benchLog(name, timeTakenS, info)
+    benchLog(name, timeTakenMs, info)
   }
   if (throwError) {
     throw error;
